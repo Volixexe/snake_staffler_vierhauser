@@ -61,8 +61,12 @@ public class SnakeGame extends GameWindowBase<String> {
 
         //#####################################################################################################
         // STUDENT TODO: Create snakes here
-
-
+        for (int idx = 0; idx < 4; idx++) {
+            WindowElementItem body0 = root.setElement(idx, 2, 'X', null);
+            snakeBodyPlayer0.add(body0);
+            WindowElementItem body1 = root.setElement(idx + 2, 6, 'Y', null);
+            snakeBodyPlayer1.add(body1);
+        }
         //#####################################################################################################
 
 
@@ -80,7 +84,25 @@ public class SnakeGame extends GameWindowBase<String> {
         //#####################################################################################################
         // STUDENT TODO: Implement a method to get the players keystroke and update the direction accordingly.
 
+        if (gameOver && this.direction0 != SpecialCharacterKey.NONE && this.direction1 != SpecialCharacterKey.NONE) {
+            this.direction0 = SpecialCharacterKey.NONE;
+            this.direction1 = SpecialCharacterKey.NONE;
+        } else if (gameOver && this.direction0 == SpecialCharacterKey.NONE && this.direction1 == SpecialCharacterKey.NONE) {
+            if (keyStrokePlayer0 == SpecialCharacterKey.ESCAPE || keyStrokePlayer1 == SpecialCharacterKey.ESCAPE) {
+                this.gameOverScreen.setText("");
+                this.gameOver = false;
+                this.direction0 = SpecialCharacterKey.RIGHT;
+                this.direction1 = SpecialCharacterKey.RIGHT;
+                onStart();
+            }
+        }
 
+        if (keyStrokePlayer0 != SpecialCharacterKey.NONE && !gameOver) {
+            this.direction0 = keyStrokePlayer0;
+        }
+        if (keyStrokePlayer1 != SpecialCharacterKey.NONE && !gameOver) {
+            this.direction1 = keyStrokePlayer1;
+        }
 
         //#####################################################################################################
 
@@ -92,6 +114,12 @@ public class SnakeGame extends GameWindowBase<String> {
         //#####################################################################################################
         // STUDENT TODO: Check if a payer is gameover
 
+        if (!this.snakeBodyPlayer0.isEmpty()) {
+            isGameOver(this.snakeBodyPlayer0);
+        }
+        if (!this.snakeBodyPlayer1.isEmpty()) {
+            isGameOver(this.snakeBodyPlayer1);
+        }
 
         //#####################################################################################################
 
@@ -105,6 +133,23 @@ public class SnakeGame extends GameWindowBase<String> {
         // STUDENT TODO: Implement logic to check if a snake hit another snake or border. To do this you mus
         // implement the function Boolean inSnake(ArrayList<WindowElementItem> snakeBody)
         // After that set class member gameover to true and clear screen
+        if (inSnake(snakeBody)) {
+            this.gameOver = true;
+        }
+        if (snakeBody.get(0).getX() < 0 || snakeBody.get(0).getY() > root.getWidth()) {
+            this.gameOver = true;
+        }
+        if (snakeBody.get(0).getY() < 0 || snakeBody.get(0).getY() > root.getHeight()) {
+            this.gameOver = true;
+        }
+
+        if (gameOver) {
+            this.snakeBodyPlayer0.forEach(b -> b.setText(""));
+            this.snakeBodyPlayer1.forEach(b -> b.setText(""));
+            this.snakeBodyPlayer0.clear();
+            this.snakeBodyPlayer1.clear();
+            this.gameOverScreen.setText(this.gameOverText);
+        }
     }
 
     public Boolean inSnake(ArrayList<WindowElementItem> snakeBody)
@@ -113,6 +158,21 @@ public class SnakeGame extends GameWindowBase<String> {
         // another snake body
         int posHeadX = snakeBody.get(0).getX();
         int posHeadY = snakeBody.get(0).getY();
+
+        if (snakeBody.equals(snakeBodyPlayer0)) {
+            for (int i = 0; i < snakeBodyPlayer1.size(); i++) {
+                if (snakeBodyPlayer1.get(i).getX() == posHeadX && snakeBodyPlayer1.get(i).getY() == posHeadY) {
+                    return true;
+                }
+            }
+        } else {
+            for (int i = 1; i < snakeBodyPlayer0.size(); i++) {
+                if (snakeBodyPlayer0.get(i).getX() == posHeadX && snakeBodyPlayer0.get(i).getY() == posHeadY) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
