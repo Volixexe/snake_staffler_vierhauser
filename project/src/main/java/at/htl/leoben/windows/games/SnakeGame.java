@@ -74,7 +74,7 @@ public class SnakeGame extends GameWindowBase<String> {
 
         generateGrid();
         for (int i = 0; i < appleCount; i++) {
-            spawnApple();
+            spawnApple(null);
         }
 
         //#####################################################################################################
@@ -278,21 +278,28 @@ public class SnakeGame extends GameWindowBase<String> {
             apples.remove(hittedApple);
             WindowElementItem bodyElement = root.setElement(oldLastX, oldLastY, snakeBody.get(0).getText().charAt(0), null);
             snakeBody.add(bodyElement);
-            spawnApple();
+            spawnApple(snakeBody);
         }
     }
 
 
-    public void spawnApple()
+    public void spawnApple(ArrayList<WindowElementItem> snakeBody)
     {
         gridSpaceList.sort((new Comparator<GridSpace>() {
             @Override
             public int compare(GridSpace o1, GridSpace o2) {
-                return o1.getAppleCount() - o2.getAppleCount();
+                if (o1.getAppleCount() == o2.getAppleCount())
+                    return 0;
+                else if (o1.getAppleCount() > o2.getAppleCount()){
+                    return 1;
+                } else {
+                    return -1;
+                }
             }
         }));
 
         for (GridSpace space: gridSpaceList) {
+            isSpaceOccupied(space, snakeBody);
             if(!space.isOccupied()) {
                 apples.add(
                         root.setElement(
@@ -300,6 +307,7 @@ public class SnakeGame extends GameWindowBase<String> {
                                 (int)(((Math.random()+1)*space.getyEnd())-space.getyStart()),
                                 (Character) space.getSymbol(),
                                 null));
+                space.setAppleCount(space.getAppleCount() + 1);
                 return;
             }
         }
@@ -319,6 +327,18 @@ public class SnakeGame extends GameWindowBase<String> {
                 gridSpaceList.add(space);
             }
         }
+    }
+
+    private void isSpaceOccupied(GridSpace space,ArrayList<WindowElementItem> snakeBody){
+        int posHeadX = snakeBody.get(0).getX();
+        int posHeadY = snakeBody.get(0).getY();
+
+        space.setOccupied(
+                posHeadX <= space.getxEnd()
+                        && posHeadX >= space.getxStart()
+                        && posHeadY <= space.getyEnd()
+                        && posHeadY >= space.getyStart());
+
     }
 
 }
