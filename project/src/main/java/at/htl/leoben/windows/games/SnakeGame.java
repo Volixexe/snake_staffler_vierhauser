@@ -108,10 +108,10 @@ public class SnakeGame extends GameWindowBase<String> {
             }
         }
 
-        if (keyStrokePlayer0 != SpecialCharacterKey.NONE && !gameOver) {
+        if (keyStrokePlayer0 != SpecialCharacterKey.NONE && keyStrokePlayer0 != SpecialCharacterKey.ESCAPE && !gameOver) {
             this.direction0 = keyStrokePlayer0;
         }
-        if (keyStrokePlayer1 != SpecialCharacterKey.NONE && !gameOver) {
+        if (keyStrokePlayer1 != SpecialCharacterKey.NONE && keyStrokePlayer1 != SpecialCharacterKey.ESCAPE && !gameOver) {
             this.direction1 = keyStrokePlayer1;
         }
 
@@ -274,6 +274,7 @@ public class SnakeGame extends GameWindowBase<String> {
         // TODO: Remove hit apple
         // Student TODO: Write a method to add a new body element to the snake and print it to the gamescreen
         if (hittedApple != -1) {
+            apples.get(hittedApple).setText("");
             apples.remove(hittedApple);
             WindowElementItem bodyElement = root.setElement(oldLastX, oldLastY, snakeBody.get(0).getText().charAt(0), null);
             snakeBody.add(bodyElement);
