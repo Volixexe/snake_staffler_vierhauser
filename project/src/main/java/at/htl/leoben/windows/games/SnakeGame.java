@@ -299,7 +299,9 @@ public class SnakeGame extends GameWindowBase<String> {
         }));
 
         for (GridSpace space: gridSpaceList) {
-            isSpaceOccupied(space, snakeBody);
+            if(snakeBody != null){
+                isSpaceOccupied(space, snakeBody);
+            }
             if(!space.isOccupied()) {
                 apples.add(
                         root.setElement(
