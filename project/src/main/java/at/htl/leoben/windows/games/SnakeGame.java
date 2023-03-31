@@ -7,12 +7,15 @@ import at.htl.leoben.engine.configurations.AlignmentVertical;
 import at.htl.leoben.engine.configurations.data.AlignmentTypeHorizontal;
 import at.htl.leoben.engine.configurations.data.AlignmentTypeVertical;
 import at.htl.leoben.engine.data.WindowElementItem;
+import at.htl.leoben.helper.GridSpace;
 import at.htl.leoben.socket.data.SpecialCharacterKey;
 import at.htl.leoben.windows.style.DefaultStyle;
 import static org.fusesource.jansi.Ansi.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -47,10 +50,11 @@ public class SnakeGame extends GameWindowBase<String> {
 
     ArrayList<WindowElementItem> apples = new ArrayList<>();
 
-    int appleCount = 6;
+    int appleCount = 4;
 
     boolean gameOver = false;
 
+    List<GridSpace> gridSpaceList = new ArrayList<>();
 
     @Override
     public void onStart() throws Exception {
@@ -67,8 +71,13 @@ public class SnakeGame extends GameWindowBase<String> {
             WindowElementItem body1 = root.setElement(6, idx + 1, 'Y', null);
             snakeBodyPlayer1.add(body1);
         }
-        //#####################################################################################################
 
+        generateGrid();
+        for (int i = 0; i < appleCount; i++) {
+            spawnApple();
+        }
+
+        //#####################################################################################################
 
         gameOverScreen = root.setText(new AlignmentHorizontal(AlignmentTypeHorizontal.CENTER), new AlignmentVertical(AlignmentTypeVertical.MIDDLE), null, null);
 
@@ -150,6 +159,8 @@ public class SnakeGame extends GameWindowBase<String> {
             this.snakeBodyPlayer1.forEach(b -> b.setText(""));
             this.snakeBodyPlayer0.clear();
             this.snakeBodyPlayer1.clear();
+            this.apples.forEach(a -> a.setText(""));
+            this.apples.clear();
             this.gameOverScreen.setText(this.gameOverText);
         }
     }
@@ -260,7 +271,7 @@ public class SnakeGame extends GameWindowBase<String> {
                 break;
             }
         }
-
+        // TODO: Remove hit apple
         // Student TODO: Write a method to add a new body element to the snake and print it to the gamescreen
         if (hittedApple != -1) {
             apples.remove(hittedApple);
@@ -273,7 +284,40 @@ public class SnakeGame extends GameWindowBase<String> {
 
     public void spawnApple()
     {
+        gridSpaceList.sort((new Comparator<GridSpace>() {
+            @Override
+            public int compare(GridSpace o1, GridSpace o2) {
+                return o1.getAppleCount() - o2.getAppleCount();
+            }
+        }));
+
+        for (GridSpace space: gridSpaceList) {
+            if(!space.isOccupied()) {
+                apples.add(
+                        root.setElement(
+                                (int)(((Math.random()+1)*space.getxEnd())-space.getxStart()),
+                                (int)(((Math.random()+1)*space.getyEnd())-space.getyStart()),
+                                (Character) space.getSymbol(),
+                                null));
+                return;
+            }
+        }
+
         // STUDENT TODO: Write a method to randomly spawn apples. Use the applescount member variable for this task
+    }
+
+    private void generateGrid() {
+
+        int gird = appleCount % 2 == 1 ? appleCount + 1 : appleCount;
+
+        int gridHeight = root.getHeight() / gird;
+        int gridWidth = root.getWidth() / gird;
+        for (int i = 0; i < gird; i++) {
+            for (int j = 0; j < gird; j++) {
+                GridSpace space = new GridSpace(i * gridWidth, j * gridHeight, (i + 1) * gridWidth, (j + 1) * gridHeight);
+                gridSpaceList.add(space);
+            }
+        }
     }
 
 }
