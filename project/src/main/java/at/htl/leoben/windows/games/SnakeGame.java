@@ -316,8 +316,8 @@ public class SnakeGame extends GameWindowBase<String> {
             if(!space.isOccupied()) {
                 apples.add(
                         root.setElement(
-                                (int)(((Math.random()+1)*space.getxEnd())-space.getxStart()),
-                                (int)(((Math.random()+1)*space.getyEnd())-space.getyStart()),
+                                (int)(((Math.random()+1)*space.getxEnd())-space.getxStart()-2),
+                                (int)(((Math.random()+1)*space.getyEnd())-space.getyStart()-4),
                                 (Character) space.getSymbol(),
                                 appleColor));
                 space.setAppleCount(space.getAppleCount() + 1);
