@@ -62,9 +62,9 @@ public class SnakeGame extends GameWindowBase<String> {
         //#####################################################################################################
         // STUDENT TODO: Create snakes here
         for (int idx = 0; idx < 4; idx++) {
-            WindowElementItem body0 = root.setElement(idx + 2, 2, 'X', null);
+            WindowElementItem body0 = root.setElement(2, idx + 2, 'X', null);
             snakeBodyPlayer0.add(body0);
-            WindowElementItem body1 = root.setElement(idx + 1, 10, 'Y', null);
+            WindowElementItem body1 = root.setElement(6, idx + 1, 'Y', null);
             snakeBodyPlayer1.add(body1);
         }
         //#####################################################################################################
@@ -172,6 +172,12 @@ public class SnakeGame extends GameWindowBase<String> {
                 if (snakeBodyPlayer0.get(i).getX() == posHeadX && snakeBodyPlayer0.get(i).getY() == posHeadY) {
                     return true;
                 }
+            }
+        }
+
+        for (int i = snakeBody.size() - 1; i > 0; i--) {
+            if (snakeBody.get(i).getX() == posHeadX && snakeBody.get(i).getY() == posHeadY) {
+                return true;
             }
         }
 
