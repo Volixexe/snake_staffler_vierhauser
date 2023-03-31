@@ -56,6 +56,10 @@ public class SnakeGame extends GameWindowBase<String> {
 
     List<GridSpace> gridSpaceList = new ArrayList<>();
 
+    private String snakeColor0 = root.formatter.getFormat(AdvancedColor.BLACK, AdvancedColor.BLUE);
+    private String snakeColor1 = root.formatter.getFormat(AdvancedColor.BLACK, AdvancedColor.GREEN);
+    private String appleColor = root.formatter.getFormat(AdvancedColor.BLACK, AdvancedColor.RED);
+
     @Override
     public void onStart() throws Exception {
         root.setTitle("SNAKE 2023");
@@ -66,9 +70,9 @@ public class SnakeGame extends GameWindowBase<String> {
         //#####################################################################################################
         // STUDENT TODO: Create snakes here
         for (int idx = 0; idx < 4; idx++) {
-            WindowElementItem body0 = root.setElement(2, idx + 2, 'X', null);
+            WindowElementItem body0 = root.setElement(2, idx + 2, 'X', snakeColor0);
             snakeBodyPlayer0.add(body0);
-            WindowElementItem body1 = root.setElement(6, idx + 1, 'Y', null);
+            WindowElementItem body1 = root.setElement(6, idx + 1, 'Y', snakeColor1);
             snakeBodyPlayer1.add(body1);
         }
 
@@ -271,12 +275,18 @@ public class SnakeGame extends GameWindowBase<String> {
                 break;
             }
         }
-        // TODO: Remove hit apple
+
         // Student TODO: Write a method to add a new body element to the snake and print it to the gamescreen
         if (hittedApple != -1) {
             apples.get(hittedApple).setText("");
             apples.remove(hittedApple);
-            WindowElementItem bodyElement = root.setElement(oldLastX, oldLastY, snakeBody.get(0).getText().charAt(0), null);
+            String style = "";
+            if (snakeBody.equals(snakeBodyPlayer0)) {
+                style = snakeColor0;
+            } else {
+                style = snakeColor1;
+            }
+            WindowElementItem bodyElement = root.setElement(oldLastX, oldLastY, snakeBody.get(0).getText().charAt(0), style);
             snakeBody.add(bodyElement);
             spawnApple(snakeBody);
         }
@@ -285,6 +295,7 @@ public class SnakeGame extends GameWindowBase<String> {
 
     public void spawnApple(ArrayList<WindowElementItem> snakeBody)
     {
+        // STUDENT TODO: Write a method to randomly spawn apples. Use the applescount member variable for this task
         gridSpaceList.sort((new Comparator<GridSpace>() {
             @Override
             public int compare(GridSpace o1, GridSpace o2) {
@@ -308,13 +319,11 @@ public class SnakeGame extends GameWindowBase<String> {
                                 (int)(((Math.random()+1)*space.getxEnd())-space.getxStart()),
                                 (int)(((Math.random()+1)*space.getyEnd())-space.getyStart()),
                                 (Character) space.getSymbol(),
-                                null));
+                                appleColor));
                 space.setAppleCount(space.getAppleCount() + 1);
                 return;
             }
         }
-
-        // STUDENT TODO: Write a method to randomly spawn apples. Use the applescount member variable for this task
     }
 
     private void generateGrid() {
