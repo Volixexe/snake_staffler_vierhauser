@@ -62,9 +62,9 @@ public class SnakeGame extends GameWindowBase<String> {
         //#####################################################################################################
         // STUDENT TODO: Create snakes here
         for (int idx = 0; idx < 4; idx++) {
-            WindowElementItem body0 = root.setElement(idx, 2, 'X', null);
+            WindowElementItem body0 = root.setElement(idx + 2, 2, 'X', null);
             snakeBodyPlayer0.add(body0);
-            WindowElementItem body1 = root.setElement(idx + 2, 6, 'Y', null);
+            WindowElementItem body1 = root.setElement(idx + 1, 10, 'Y', null);
             snakeBodyPlayer1.add(body1);
         }
         //#####################################################################################################
@@ -93,6 +93,8 @@ public class SnakeGame extends GameWindowBase<String> {
                 this.gameOver = false;
                 this.direction0 = SpecialCharacterKey.RIGHT;
                 this.direction1 = SpecialCharacterKey.RIGHT;
+                keyStrokePlayer0 = SpecialCharacterKey.NONE;
+                keyStrokePlayer1 = SpecialCharacterKey.NONE;
                 onStart();
             }
         }
@@ -136,10 +138,10 @@ public class SnakeGame extends GameWindowBase<String> {
         if (inSnake(snakeBody)) {
             this.gameOver = true;
         }
-        if (snakeBody.get(0).getX() < 0 || snakeBody.get(0).getY() > root.getWidth()) {
+        if (snakeBody.get(0).getX() < 0 || snakeBody.get(0).getX() > root.getWidth() - 2) {
             this.gameOver = true;
         }
-        if (snakeBody.get(0).getY() < 0 || snakeBody.get(0).getY() > root.getHeight()) {
+        if (snakeBody.get(0).getY() < 0 || snakeBody.get(0).getY() > root.getHeight() - 4) {
             this.gameOver = true;
         }
 
@@ -166,7 +168,7 @@ public class SnakeGame extends GameWindowBase<String> {
                 }
             }
         } else {
-            for (int i = 1; i < snakeBodyPlayer0.size(); i++) {
+            for (int i = 0; i < snakeBodyPlayer0.size(); i++) {
                 if (snakeBodyPlayer0.get(i).getX() == posHeadX && snakeBodyPlayer0.get(i).getY() == posHeadY) {
                     return true;
                 }
@@ -235,7 +237,7 @@ public class SnakeGame extends GameWindowBase<String> {
         }
 
         // Student TODO: Call a method to detect if the snake just ate an apple
-
+        hitApple(oldLastX, oldLastY, snakeBody);
     }
 
 
@@ -254,7 +256,12 @@ public class SnakeGame extends GameWindowBase<String> {
         }
 
         // Student TODO: Write a method to add a new body element to the snake and print it to the gamescreen
-
+        if (hittedApple != -1) {
+            apples.remove(hittedApple);
+            WindowElementItem bodyElement = root.setElement(oldLastX, oldLastY, snakeBody.get(0).getText().charAt(0), null);
+            snakeBody.add(bodyElement);
+            spawnApple();
+        }
     }
 
 
